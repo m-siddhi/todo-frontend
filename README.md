@@ -3,6 +3,9 @@
 This is the frontend for the To-Do List app, built with **React.js**.  
 It integrates with the backend APIs to manage tasks in real time.
 
+Challenge: CORS errors when fetching tasks.
+Solution: Installed cors package in backend and enabled it with app.use(cors()).
+
 ## Setup
 1. Clone the repo
 2. Run `npm install`
