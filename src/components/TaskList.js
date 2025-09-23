@@ -3,12 +3,13 @@ import TaskItem from "./TaskItem";
 
 export default function TaskList({ tasks, onDelete, onToggle, onUpdate }) {
   if (!tasks || tasks.length === 0) return <div>No tasks yet</div>;
+
   return (
     <ul style={{ listStyle: "none", padding: 0 }}>
-      {tasks.map((t) => (
+      {tasks.map((task) => (
         <TaskItem
-          key={t._id}
-          task={t}
+          key={task._id}
+          task={task}
           onDelete={onDelete}
           onToggle={onToggle}
           onUpdate={onUpdate}

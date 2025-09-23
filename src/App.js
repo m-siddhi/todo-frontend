@@ -13,7 +13,7 @@ function App() {
     setError(null);
     try {
       const res = await api.get("/tasks" + (query ? `?${query}` : ""));
-      const data = res.data.tasks ?? res.data;
+      const data = res.data.tasks || res.data;
       setTasks(data);
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -26,13 +26,13 @@ function App() {
     fetchTasks();
   }, []);
 
-  async function addTask(payload) {
-    const res = await api.post("/tasks", payload);
+  async function addTask(task) {
+    const res = await api.post("/tasks", task);
     setTasks((prev) => [res.data, ...prev]);
   }
 
-  async function updateTask(id, payload) {
-    const res = await api.put(`/tasks/${id}`, payload);
+  async function updateTask(id, updated) {
+    const res = await api.put(`/tasks/${id}`, updated);
     setTasks((prev) => prev.map((t) => (t._id === id ? res.data : t)));
   }
 

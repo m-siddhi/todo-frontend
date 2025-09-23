@@ -8,6 +8,7 @@ export default function TaskItem({ task, onDelete, onToggle }) {
     justifyContent: "space-between",
     alignItems: "center",
   };
+
   return (
     <li style={style}>
       <div>
@@ -27,7 +28,9 @@ export default function TaskItem({ task, onDelete, onToggle }) {
         {task.priority && (
           <small style={{ marginLeft: 8 }}>({task.priority})</small>
         )}
-        <div style={{ fontSize: 12, color: "#666" }}>{task.description}</div>
+        {task.description && (
+          <div style={{ fontSize: 12, color: "#666" }}>{task.description}</div>
+        )}
       </div>
       <div>
         <button onClick={() => onDelete(task._id)}>Delete</button>

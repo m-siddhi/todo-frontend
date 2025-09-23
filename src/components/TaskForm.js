@@ -11,11 +11,14 @@ export default function TaskForm({ onAdd }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setErr(null);
+
     if (!title.trim()) {
       setErr("Title required");
       return;
     }
+
     setSubmitting(true);
+
     try {
       await onAdd({
         title: title.trim(),
