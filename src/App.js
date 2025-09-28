@@ -13,12 +13,7 @@ function App() {
     setErr("");
     try {
       const res = await api.get("/tasks");
-      const tasksFromApi = res.data.tasks ? res.data.tasks : res.data;
-      const tasksWithCompleted = tasksFromApi.map((t) => ({
-        ...t,
-        completed: t.completed || false,
-      }));
-      setTasks(tasksWithCompleted);
+      setTasks(res.data); // res.data should be array of tasks from backend
     } catch (e) {
       setErr("could not load tasks");
     } finally {
@@ -33,12 +28,7 @@ function App() {
   const addTask = async (task) => {
     try {
       const res = await api.post("/tasks", task);
-      if (res.data && res.data._id) {
-        setTasks((prev) => [
-          { ...res.data, completed: res.data.completed || false },
-          ...prev,
-        ]);
-      }
+      setTasks((prev) => [...prev, res.data]);
     } catch (e) {
       console.log("add err", e);
     }
@@ -47,13 +37,7 @@ function App() {
   const updateTask = async (id, obj) => {
     try {
       const res = await api.put(`/tasks/${id}`, obj);
-      setTasks(
-        tasks.map((t) =>
-          t._id === id
-            ? { ...res.data, completed: res.data.completed || false }
-            : t
-        )
-      );
+      setTasks(tasks.map((t) => (t._id === id ? res.data : t)));
     } catch (e) {
       console.log("update err", e);
     }
@@ -68,11 +52,8 @@ function App() {
     }
   };
 
-  const toggleTask = (id) => {
-    const task = tasks.find((t) => t._id === id);
-    if (!task) return;
-    const newStatus = task.completed ? false : true;
-    updateTask(id, { completed: newStatus });
+  const toggleTask = (t) => {
+    updateTask(t._id, { completed: !t.completed });
   };
 
   return (
