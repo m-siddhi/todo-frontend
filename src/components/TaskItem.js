@@ -7,7 +7,7 @@ function TaskItem({ task, onDelete, onToggle }) {
         <input
           type="checkbox"
           checked={task.completed}
-          onChange={() => onToggle(task._id)} // pass only the _id
+          onChange={() => onToggle(task._id)}
         />
         <span
           style={{ textDecoration: task.completed ? "line-through" : "none" }}
