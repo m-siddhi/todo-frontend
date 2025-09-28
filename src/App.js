@@ -35,12 +35,19 @@ function App() {
     }
   };
 
-  const updateTask = async (task) => {
+  const updateTask = async (id, updatedFields) => {
     try {
-      const res = await api.put(`/tasks/${task._id}`, task);
-      setTasks(tasks.map((t) => (t._id === task._id ? res.data : t)));
-    } catch {
-      setErr("Could not update task");
+      const res = await api.put(`/tasks/${id}`, updatedFields);
+      setTasks(tasks.map((t) => (t._id === id ? res.data : t)));
+    } catch (e) {
+      console.log("update error", e);
+    }
+  };
+
+  const toggleTask = (id) => {
+    const task = tasks.find((t) => t._id === id);
+    if (task) {
+      updateTask(id, { completed: !task.completed });
     }
   };
 
@@ -51,10 +58,6 @@ function App() {
     } catch {
       setErr("Could not delete task");
     }
-  };
-
-  const toggleTask = (task) => {
-    updateTask({ ...task, completed: !task.completed });
   };
 
   return (

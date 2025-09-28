@@ -7,7 +7,7 @@ function TaskItem({ task, onDelete, onToggle }) {
         <input
           type="checkbox"
           checked={task.completed}
-          onChange={() => onToggle(task._id)}
+          onChange={() => onToggle(task._id)} // pass only the _id
         />
         <span
           style={{ textDecoration: task.completed ? "line-through" : "none" }}
@@ -16,9 +16,10 @@ function TaskItem({ task, onDelete, onToggle }) {
         </span>
       </label>
 
-      {task.priority && <span> [{task.priority}] </span>}
-
-      {task.description && <div className="desc">{task.description}</div>}
+      {task.priority && (
+        <span className={`priority ${task.priority}`}>[{task.priority}]</span>
+      )}
+      {task.description && <div className="details">{task.description}</div>}
 
       <button onClick={() => onDelete(task._id)}>x</button>
     </li>
