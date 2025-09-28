@@ -6,59 +6,57 @@ import TaskList from "./components/TaskList";
 function App() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [err, setErr] = useState("");
 
-  async function fetchTasks(query = "") {
+  const getTasks = async () => {
     setLoading(true);
-    setError(null);
+    setErr("");
     try {
-      const res = await api.get("/tasks" + (query ? `?${query}` : ""));
-      const data = res.data.tasks || res.data;
-      setTasks(data);
-    } catch (err) {
-      setError(err.response?.data?.message || err.message);
+      const res = await api.get("/tasks");
+      setTasks(res.data.tasks ? res.data.tasks : res.data);
+    } catch (e) {
+      setErr("could not load tasks");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchTasks();
+    getTasks();
   }, []);
 
-  async function addTask(task) {
-    const res = await api.post("/tasks", task);
-    setTasks((prev) => [res.data, ...prev]);
-  }
+  const addTask = async (task) => {
+    try {
+      const res = await api.post("/tasks", task);
+      setTasks([res.data, ...tasks]);
+    } catch (e) {
+      console.log("add err", e);
+    }
+  };
 
-  async function updateTask(id, updated) {
-    const res = await api.put(`/tasks/${id}`, updated);
-    setTasks((prev) => prev.map((t) => (t._id === id ? res.data : t)));
-  }
+  const updateTask = async (id, obj) => {
+    const res = await api.put(`/tasks/${id}`, obj);
+    setTasks(tasks.map((t) => (t._id === id ? res.data : t)));
+  };
 
-  async function deleteTask(id) {
+  const deleteTask = async (id) => {
     await api.delete(`/tasks/${id}`);
-    setTasks((prev) => prev.filter((t) => t._id !== id));
-  }
+    setTasks(tasks.filter((t) => t._id !== id));
+  };
 
-  async function toggleComplete(task) {
-    await updateTask(task._id, { completed: !task.completed });
-  }
+  const toggleTask = (t) => {
+    updateTask(t._id, { completed: !t.completed });
+  };
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: 16 }}>
-      <h1>To-Do App</h1>
+    <div className="app">
+      <h2>Todo App</h2>
       <TaskForm onAdd={addTask} />
-      {error && <div style={{ color: "red" }}>{error}</div>}
+      {err && <p style={{ color: "red" }}>{err}</p>}
       {loading ? (
-        <div>Loading...</div>
+        <p>loading...</p>
       ) : (
-        <TaskList
-          tasks={tasks}
-          onDelete={deleteTask}
-          onToggle={toggleComplete}
-          onUpdate={updateTask}
-        />
+        <TaskList tasks={tasks} onDelete={deleteTask} onToggle={toggleTask} />
       )}
     </div>
   );

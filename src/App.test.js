@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import App from "./App";
 
-test("renders To-Do App heading", () => {
+test("shows todo heading", () => {
   render(<App />);
-  const heading = screen.getByText(/to-do app/i);
-  expect(heading).toBeInTheDocument();
+  const el = screen.getByText(/todo app/i);
+  expect(el).toBeTruthy();
 });

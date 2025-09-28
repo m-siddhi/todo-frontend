@@ -1,73 +1,68 @@
 import React, { useState } from "react";
 import "./TaskForm.css";
 
-export default function TaskForm({ onAdd }) {
+function TaskForm({ onAdd }) {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState("low");
-  const [submitting, setSubmitting] = useState(false);
-  const [err, setErr] = useState(null);
+  const [desc, setDesc] = useState("");
+  const [prio, setPrio] = useState("low");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setErr(null);
+    setError("");
 
-    if (!title.trim()) {
-      setErr("Title required");
+    if (!title) {
+      setError("title is required");
       return;
     }
 
-    setSubmitting(true);
+    setLoading(true);
 
     try {
       await onAdd({
-        title: title.trim(),
-        description: description.trim(),
-        priority,
+        title: title,
+        description: desc,
+        priority: prio,
       });
+
+      // reset fields
       setTitle("");
-      setDescription("");
-      setPriority("low");
-    } catch (error) {
-      setErr(error.message || "Failed to add");
+      setDesc("");
+      setPrio("low");
+    } catch (err) {
+      setError("could not add task");
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="task-form">
-      <div>
-        <input
-          placeholder="Task title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </div>
-      <div>
-        <input
-          placeholder="Description (optional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-      </div>
-      <div className="priority-row">
-        <label>
-          Priority:
-          <select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-        </label>
-      </div>
-      {err && <div className="error">{err}</div>}
-      <button type="submit" disabled={submitting}>
-        {submitting ? "Adding..." : "Add Task"}
+    <form className="task-form" onSubmit={handleSubmit}>
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="enter title"
+      />
+      <input
+        value={desc}
+        onChange={(e) => setDesc(e.target.value)}
+        placeholder="enter description"
+      />
+
+      <select value={prio} onChange={(e) => setPrio(e.target.value)}>
+        <option value="low">low</option>
+        <option value="medium">medium</option>
+        <option value="high">high</option>
+      </select>
+
+      {error && <p className="error">{error}</p>}
+
+      <button type="submit" disabled={loading}>
+        {loading ? "saving..." : "add"}
       </button>
     </form>
   );
 }
+
+export default TaskForm;
