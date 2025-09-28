@@ -13,7 +13,12 @@ function App() {
     setErr("");
     try {
       const res = await api.get("/tasks");
-      setTasks(res.data.tasks ? res.data.tasks : res.data);
+      const tasksFromApi = res.data.tasks ? res.data.tasks : res.data;
+      const tasksWithCompleted = tasksFromApi.map((t) => ({
+        ...t,
+        completed: t.completed || false,
+      }));
+      setTasks(tasksWithCompleted);
     } catch (e) {
       setErr("could not load tasks");
     } finally {
@@ -28,24 +33,46 @@ function App() {
   const addTask = async (task) => {
     try {
       const res = await api.post("/tasks", task);
-      setTasks((prev) => [res.data, ...prev]);
+      if (res.data && res.data._id) {
+        setTasks((prev) => [
+          { ...res.data, completed: res.data.completed || false },
+          ...prev,
+        ]);
+      }
     } catch (e) {
       console.log("add err", e);
     }
   };
 
   const updateTask = async (id, obj) => {
-    const res = await api.put(`/tasks/${id}`, obj);
-    setTasks(tasks.map((t) => (t._id === id ? res.data : t)));
+    try {
+      const res = await api.put(`/tasks/${id}`, obj);
+      setTasks(
+        tasks.map((t) =>
+          t._id === id
+            ? { ...res.data, completed: res.data.completed || false }
+            : t
+        )
+      );
+    } catch (e) {
+      console.log("update err", e);
+    }
   };
 
   const deleteTask = async (id) => {
-    await api.delete(`/tasks/${id}`);
-    setTasks(tasks.filter((t) => t._id !== id));
+    try {
+      await api.delete(`/tasks/${id}`);
+      setTasks(tasks.filter((t) => t._id !== id));
+    } catch (e) {
+      console.log("delete err", e);
+    }
   };
 
-  const toggleTask = (t) => {
-    updateTask(t._id, { completed: !t.completed });
+  const toggleTask = (id) => {
+    const task = tasks.find((t) => t._id === id);
+    if (!task) return;
+    const newStatus = task.completed ? false : true;
+    updateTask(id, { completed: newStatus });
   };
 
   return (
