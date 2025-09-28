@@ -28,7 +28,7 @@ function App() {
   const addTask = async (task) => {
     try {
       const res = await api.post("/tasks", task);
-      setTasks([res.data, ...tasks]);
+      setTasks((prev) => [res.data, ...prev]);
     } catch (e) {
       console.log("add err", e);
     }
