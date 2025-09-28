@@ -13,9 +13,10 @@ function App() {
     setErr("");
     try {
       const res = await api.get("/tasks");
-      setTasks(res.data); // res.data should be array of tasks from backend
+      setTasks(res.data); // tasks array from backend
     } catch (e) {
       setErr("could not load tasks");
+      console.log("fetch error", e);
     } finally {
       setLoading(false);
     }
@@ -28,7 +29,7 @@ function App() {
   const addTask = async (task) => {
     try {
       const res = await api.post("/tasks", task);
-      setTasks((prev) => [...prev, res.data]);
+      setTasks((prev) => [res.data, ...prev]);
     } catch (e) {
       console.log("add err", e);
     }
