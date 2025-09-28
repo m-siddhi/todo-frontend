@@ -9,14 +9,17 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
+  // Fetch tasks from backend
   const getTasks = async () => {
     setLoading(true);
     setErr("");
     try {
       const res = await api.get("/tasks");
-      setTasks(Array.isArray(res.data) ? res.data : [res.data]);
-
+      // backend returns { tasks: [...] }
+      setTasks(res.data.tasks || res.data);
+    } catch (error) {
       setErr("Could not load tasks");
+      console.error("GET tasks error:", error);
     } finally {
       setLoading(false);
     }
@@ -26,24 +29,29 @@ function App() {
     getTasks();
   }, []);
 
+  // Add new task
   const addTask = async (task) => {
     try {
       const res = await api.post("/tasks", task);
-      setTasks((prev) => [res.data, ...prev]);
-    } catch {
+      setTasks((prev) => [res.data, ...prev]); // res.data is the new task
+    } catch (error) {
       setErr("Could not add task");
+      console.error("POST task error:", error);
     }
   };
 
+  // Update task
   const updateTask = async (id, updatedFields) => {
     try {
       const res = await api.put(`/tasks/${id}`, updatedFields);
       setTasks(tasks.map((t) => (t._id === id ? res.data : t)));
-    } catch {
+    } catch (error) {
       setErr("Could not update task");
+      console.error("PUT task error:", error);
     }
   };
 
+  // Toggle task completed
   const toggleTask = (id) => {
     const task = tasks.find((t) => t._id === id);
     if (task) {
@@ -51,12 +59,14 @@ function App() {
     }
   };
 
+  // Delete task
   const deleteTask = async (id) => {
     try {
       await api.delete(`/tasks/${id}`);
       setTasks(tasks.filter((t) => t._id !== id));
-    } catch {
+    } catch (error) {
       setErr("Could not delete task");
+      console.error("DELETE task error:", error);
     }
   };
 
