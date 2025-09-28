@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "./api";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
+import "./App.css";
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -13,10 +14,9 @@ function App() {
     setErr("");
     try {
       const res = await api.get("/tasks");
-      setTasks(res.data); // tasks array from backend
-    } catch (e) {
-      setErr("could not load tasks");
-      console.log("fetch error", e);
+      setTasks(Array.isArray(res.data) ? res.data : res.data.tasks || []);
+    } catch {
+      setErr("Could not load tasks");
     } finally {
       setLoading(false);
     }
@@ -30,17 +30,17 @@ function App() {
     try {
       const res = await api.post("/tasks", task);
       setTasks((prev) => [res.data, ...prev]);
-    } catch (e) {
-      console.log("add err", e);
+    } catch {
+      setErr("Could not add task");
     }
   };
 
-  const updateTask = async (id, obj) => {
+  const updateTask = async (task) => {
     try {
-      const res = await api.put(`/tasks/${id}`, obj);
-      setTasks(tasks.map((t) => (t._id === id ? res.data : t)));
-    } catch (e) {
-      console.log("update err", e);
+      const res = await api.put(`/tasks/${task._id}`, task);
+      setTasks(tasks.map((t) => (t._id === task._id ? res.data : t)));
+    } catch {
+      setErr("Could not update task");
     }
   };
 
@@ -48,20 +48,20 @@ function App() {
     try {
       await api.delete(`/tasks/${id}`);
       setTasks(tasks.filter((t) => t._id !== id));
-    } catch (e) {
-      console.log("delete err", e);
+    } catch {
+      setErr("Could not delete task");
     }
   };
 
-  const toggleTask = (t) => {
-    updateTask(t._id, { completed: !t.completed });
+  const toggleTask = (task) => {
+    updateTask({ ...task, completed: !task.completed });
   };
 
   return (
     <div className="app">
       <h2>Todo App</h2>
       <TaskForm onAdd={addTask} />
-      {err && <p style={{ color: "red" }}>{err}</p>}
+      {err && <p className="error">{err}</p>}
       {loading ? (
         <p>loading...</p>
       ) : (

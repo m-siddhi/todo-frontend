@@ -11,27 +11,23 @@ function TaskForm({ onAdd }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
     if (!title) {
-      setError("title is required");
+      setError("Title is required");
       return;
     }
-
     setLoading(true);
-
     try {
       await onAdd({
-        title: title,
+        title,
         description: desc,
         priority: prio,
+        completed: false,
       });
-
-      // reset fields
       setTitle("");
       setDesc("");
       setPrio("low");
-    } catch (err) {
-      setError("could not add task");
+    } catch {
+      setError("Could not add task");
     } finally {
       setLoading(false);
     }
@@ -40,24 +36,21 @@ function TaskForm({ onAdd }) {
   return (
     <form className="task-form" onSubmit={handleSubmit}>
       <input
+        placeholder="Enter title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="enter title"
       />
       <input
+        placeholder="Enter description"
         value={desc}
         onChange={(e) => setDesc(e.target.value)}
-        placeholder="enter description"
       />
-
       <select value={prio} onChange={(e) => setPrio(e.target.value)}>
         <option value="low">low</option>
         <option value="medium">medium</option>
         <option value="high">high</option>
       </select>
-
       {error && <p className="error">{error}</p>}
-
       <button type="submit" disabled={loading}>
         {loading ? "saving..." : "add"}
       </button>
