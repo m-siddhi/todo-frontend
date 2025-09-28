@@ -39,8 +39,8 @@ function App() {
     try {
       const res = await api.put(`/tasks/${id}`, updatedFields);
       setTasks(tasks.map((t) => (t._id === id ? res.data : t)));
-    } catch (e) {
-      console.log("update error", e);
+    } catch {
+      setErr("Could not update task");
     }
   };
 
