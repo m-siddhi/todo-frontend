@@ -14,8 +14,8 @@ function App() {
     setErr("");
     try {
       const res = await api.get("/tasks");
-      setTasks(Array.isArray(res.data) ? res.data : res.data.tasks || []);
-    } catch {
+      setTasks(Array.isArray(res.data) ? res.data : [res.data]);
+
       setErr("Could not load tasks");
     } finally {
       setLoading(false);
