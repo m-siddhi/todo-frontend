@@ -1,21 +1,21 @@
 import React from "react";
 import TaskItem from "./TaskItem";
 
-function TaskList({ tasks, onDelete, onToggle }) {
-  if (!tasks || tasks.length === 0) return <p>No tasks</p>;
+const TaskList = ({ tasks, onDelete, onToggleStatus }) => {
+  if (tasks.length === 0) return <p>No tasks found</p>;
 
   return (
-    <ul>
-      {tasks.map((t) => (
+    <ul className="task-list">
+      {tasks.map((task) => (
         <TaskItem
-          key={t._id}
-          task={t}
+          key={task._id}
+          task={task}
           onDelete={onDelete}
-          onToggle={onToggle}
+          onToggleStatus={onToggleStatus}
         />
       ))}
     </ul>
   );
-}
+};
 
 export default TaskList;

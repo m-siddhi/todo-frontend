@@ -1,61 +1,29 @@
 import React, { useState } from "react";
-import "./TaskForm.css";
+import "../index.css";
 
-function TaskForm({ onAdd }) {
+const TaskForm = ({ onAddTask }) => {
   const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
-  const [prio, setPrio] = useState("low");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    if (!title) {
-      setError("Title is required");
-      return;
-    }
-    setLoading(true);
-    try {
-      await onAdd({
-        title,
-        description: desc,
-        priority: prio,
-        completed: false,
-      });
-      setTitle("");
-      setDesc("");
-      setPrio("low");
-    } catch {
-      setError("Could not add task");
-    } finally {
-      setLoading(false);
-    }
+  const handleAdd = () => {
+    if (!title.trim()) return;
+    onAddTask({ title });
+    setTitle("");
   };
 
   return (
-    <form className="task-form" onSubmit={handleSubmit}>
+    <div className="task-form">
       <input
-        placeholder="Enter title"
+        type="text"
+        placeholder="Task title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        className="input-field"
       />
-      <input
-        placeholder="Enter description"
-        value={desc}
-        onChange={(e) => setDesc(e.target.value)}
-      />
-      <select value={prio} onChange={(e) => setPrio(e.target.value)}>
-        <option value="low">low</option>
-        <option value="medium">medium</option>
-        <option value="high">high</option>
-      </select>
-      {error && <p className="error">{error}</p>}
-      <button type="submit" disabled={loading}>
-        {loading ? "saving..." : "add"}
+      <button onClick={handleAdd} className="btn">
+        Add
       </button>
-    </form>
+    </div>
   );
-}
+};
 
 export default TaskForm;

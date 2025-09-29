@@ -1,29 +1,21 @@
 import React from "react";
+import "../index.css";
 
-function TaskItem({ task, onDelete, onToggle }) {
+const TaskItem = ({ task, onDelete, onToggleStatus }) => {
   return (
     <li className="task-item">
-      <label>
-        <input
-          type="checkbox"
-          checked={task.completed}
-          onChange={() => onToggle(task._id)}
-        />
-        <span
-          style={{ textDecoration: task.completed ? "line-through" : "none" }}
-        >
-          {task.title}
-        </span>
-      </label>
+      <span className={task.status === "completed" ? "completed" : ""}>
+        {task.title}
+      </span>
 
-      {task.priority && (
-        <span className={`priority ${task.priority}`}>[{task.priority}]</span>
-      )}
-      {task.description && <div className="details">{task.description}</div>}
-
-      <button onClick={() => onDelete(task._id)}>x</button>
+      <div className="task-buttons">
+        <button onClick={() => onToggleStatus(task._id, task.status)}>
+          {task.status === "pending" ? "Complete" : "Undo"}
+        </button>
+        <button onClick={() => onDelete(task._id)}>Delete</button>
+      </div>
     </li>
   );
-}
+};
 
 export default TaskItem;
