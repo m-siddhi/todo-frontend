@@ -1,12 +1,13 @@
 import axios from "axios";
 
-const API_URL = "https://todo-backend-1-1jez.onrender.com/api/tasks";
+const BASE_URL = "https://todo-backend-1-1jez.onrender.com/api/tasks";
 
-export const getTasks = () => axios.get(API_URL);
-export const createTask = (task) => axios.post(API_URL, task);
-export const updateTask = (id, updatedTask) =>
-  axios.put(`${API_URL}/${id}`, updatedTask);
-export const deleteTask = (id) => axios.delete(`${API_URL}/${id}`);
-export const updateStatus = (id, status) =>
-  axios.patch(`${API_URL}/${id}/status`, { status });
-export const searchTasks = (query) => axios.get(`${API_URL}/search?q=${query}`);
+export const fetchTasks = () => axios.get(BASE_URL);
+export const addTask = (task) => axios.post(BASE_URL, task);
+export const editTask = (id, taskData) =>
+  axios.put(`${BASE_URL}/${id}`, taskData);
+export const removeTask = (id) => axios.delete(`${BASE_URL}/${id}`);
+export const toggleStatus = (id, status) =>
+  axios.patch(`${BASE_URL}/${id}/status`, { status });
+export const searchTasks = (query) =>
+  axios.get(`${BASE_URL}/search?q=${query}`);
